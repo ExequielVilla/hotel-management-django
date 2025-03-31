@@ -1,0 +1,75 @@
+{% extends 'index.html' %}
+
+{% block habitaciones_content %}
+<button type="button" class="btn btn-agregar mb-3" id="habitacion-agregar" data-bs-toggle="modal" data-bs-target="#habitacion-modal" data-content="habitacion-modal-content" data-url="{% url 'habitacion_crear' %}">
+    <i class="fas fa-plus"></i> Agregar
+</button>
+
+<div id="habitacion-lista">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Capacidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for habitacion in habitaciones %}
+            <tr class="text-center align-middle">
+                <td>{{ habitacion.numero }}</td>
+                <td>{{ habitacion.tipo_habitacion.nombre }}</td>
+                <td>{{ habitacion.estado }}</td>
+                <td>{{ habitacion.tipo_habitacion.capacidad_maxima }}</td>
+                <td>
+                    <button type="button" class="btn btn-editar" id="habitacion-editar" data-bs-toggle="modal"
+                        data-bs-target="#habitacion-modal" data-content="habitacion-modal-content" data-url="{% url 'habitacion_editar' habitacion.id %}">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-eliminar" id="habitacion-eliminar" data-bs-toggle="modal"
+                    data-bs-target="#habitacion-modal-eliminar" data-content="habitacion-modal-content-eliminar" data-url="{% url 'habitacion_eliminar' habitacion.id %}">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para formulario de Agregar/Editar -->
+<div class="modal fade" id="habitacion-modal" tabindex="-1" aria-labelledby="formHabitacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="habitacion-modal-content">
+            <!-- Contenido dinámico con JS -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Eliminar -->
+<div class="modal fade" id="habitacion-modal-eliminar" tabindex="-1" aria-labelledby="confirmarEliminarHabitacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que quieres eliminar esta habitación?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="habitacion-modal-content-eliminar" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-eliminar">Eliminar</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

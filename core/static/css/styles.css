@@ -1,0 +1,173 @@
+/********** para base.html *********/
+.logo-img{
+    width: 100px;
+    height: auto;
+}
+
+body {
+    background-color: #F9F7F7; /* Fondo general */
+    color: #112D4E; /* Texto principal */
+    font-family: 'Open Sans', sans-serif; /* O la que prefieras */
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Lora', sans-serif; /* O Playfair Display si buscas un toque elegante */
+}
+
+.bg-darkblue{
+    background-color: #112D4E; /* Fondo general */
+}
+.bg-blue{
+    background-color: #3F72AF; /* Fondo general */
+}
+.txt-light{
+    color: #F9F7F7; /* Texto principal */
+}
+
+.bg-cyan{
+    background-color: #DBE2EF; /* Fondo general */
+}
+.txt-darkblue{
+    color: #112D4E; /* Texto principal */
+}
+
+.sidebar{
+    background-color: #112D4E; /* Fondo del sidebar */
+    color: #F9F7F7;
+}
+
+
+/********** para login.html *********/
+.login-bg-container {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Opcional para efecto parallax */
+}
+
+
+/********** Para el form de Iconos de ServiciosHab ********/
+.icon-container{
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.icon-option {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.icon-option.selected {
+    border: 2px solid #007bff;
+    background-color: #f0f0f0;
+}
+
+
+/**********  Para Tipos de Habitacion ********/
+.contador {
+    background-color: #3F72AF;
+    color: #F9F7F7;
+}
+
+.carrusel{
+    max-height: 600px;
+    object-fit: cover;
+}
+
+.img-miniatura {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+
+/********** Generalidades *********/
+.modal-header{
+    background-color: #DBE2EF; /* Fondo general */
+    color: #112D4E; /* Texto principal */
+}
+
+.tab-container {
+    margin-bottom: 20px; /* Espaciado inferior */
+}
+
+.nav-tabs .nav-link{
+    background-color: #DBE2EF; /* Fondo del tab */
+    color: #112D4E; /* Color del texto del tab */
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.nav-tabs .nav-link.active{
+    background-color: #112D4E; /* Fondo del tab activo */
+    color: #F9F7F7; /* Color del texto del tab activo */
+}
+
+.nav-tabs .nav-link:hover, .sidebar .nav-item:hover {
+    background-color: #3F72AF; /* Fondo del tab al hacer hover */
+    color: #F9F7F7; /* Color del texto al hacer hover */
+}
+
+.table thead th {
+    background-color: #DBE2EF;
+    color: #112D4E;
+    text-align: center;
+}
+
+.btn-agregar {
+    background-color: #1e6823 ; /* Verde más oscuro y frío */
+    color: #F9F7F7;
+    border: none;
+    cursor: pointer;
+}
+.btn-agregar:hover {
+    background-color: #114a15 ; /* Verde más oscuro al pasar el mouse */
+    color: #F9F7F7 ;
+}
+
+.btn-editar {
+    background-color: #bb8704   ; /* Amarillo/naranja más oscuro y frío */
+    color: #F9F7F7;
+    border: none;
+    cursor: pointer;
+}
+.btn-editar:hover {
+    background-color: #8d6606; /* Amarillo/naranja más oscuro al pasar el mouse */
+    color: #F9F7F7 ;
+}
+
+.btn-eliminar {
+    background-color: #8d2b33; /* Rojo más oscuro y frío */
+    color: #F9F7F7;
+    border: none;
+    /* padding: 10px 20px; */
+    cursor: pointer;
+}
+.btn-eliminar:hover {
+    background-color: #620f17; /* Rojo más oscuro al pasar el mouse */
+    color: #F9F7F7 ;
+}
+
+.btn-principal {
+    background-color: #2744ae; /* Rojo más oscuro y frío */
+    color: #F9F7F7;
+    border: none;
+    /* padding: 10px 20px; */
+    cursor: pointer;
+}
+.btn-principal:hover {
+    background-color: #152e86; /* Rojo más oscuro al pasar el mouse */
+    color: #F9F7F7 ;
+}

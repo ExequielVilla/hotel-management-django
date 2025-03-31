@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row min-vh-100 align-items-center justify-content-center">
+    <div class="col-lg-4 mb-4">
+        <div class="card mb-4">
+            <div class="card-body mb-4">
+                {% load static %}
+                <h2 class="text-center">
+                    <div class="login-bg-container">
+                        <img src="{% static 'images/Logo del Hotel 3.jpg' %}" alt="Logo" class="img-fluid logo-img rounded-circle mb-1">
+                    </div>
+                    <label class="form-label"> Acceso al Sistema </label>
+                </h2>
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    Usuario o contraseña incorrectos. Por favor intente nuevamente.
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="{% url 'login' %}" class="mt-2">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-user me-2"></i>Usuario*
+                        </label>
+                        <input type="text" id="username" name="username" class="form-control {% if form.errors %} is-invalid {% endif %}" placeholder="Ingrese su usuario" autofocus>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-lock me-2"></i>Contraseña*
+                        </label>
+                        <input type="password" id="password" name="password" class="form-control {% if form.errors %} is-invalid {% endif %}" placeholder="Ingrese su contraseña">
+                    </div>
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-principal btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+                        </button>
+                    </div>
+                    <div class="text-end">
+                        <a href="{% url 'password_reset' %}" class="text-dark">Olvidé la contraseña</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

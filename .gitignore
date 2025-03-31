@@ -1,0 +1,13 @@
+# Entornos virtuales
+envHotel/
+
+# Archivos de Python
+*.pyc
+__pycache__/
+
+# Configuración local de Django
+*.sqlite3
+
+# Archivos temporales de sistemas operativos
+.DS_Store
+Thumbs.db

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row px-4 py-2 justify-content-center">
+    <div class="col">
+        <h2 class="mb-3">Gestión de Habitaciones</h2>
+        <div class="tab-container">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link {% if request.resolver_match.url_name in 'habitacion_lista indice' %}active{% endif %}" href="{% url 'habitacion_lista' %}">Habitaciones</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'tipo_habitacion_lista' %}active{% endif %}" href="{% url 'tipo_habitacion_lista' %}">Tipos de Habitación</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'servicio_habitacion_lista' %}active{% endif %}" href="{% url 'servicio_habitacion_lista' %}">Servicios</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="tab-content" class="tab-content">
+            <div class="tab-pane {% if request.resolver_match.url_name in 'habitacion_lista indice' %}active{% endif %}" id="habitaciones">
+                {% block habitaciones_content %}{% endblock %}
+            </div>
+            <div class="tab-pane {% if request.resolver_match.url_name == 'tipo_habitacion_lista' %}active{% endif %}" id="tipos-habitacion">
+                {% block tipos_habitacion_content %}{% endblock %}
+            </div>
+            <div class="tab-pane {% if request.resolver_match.url_name == 'servicio_habitacion_lista' %}active{% endif %}" id="servicios-habitacion">
+                {% block servicios_habitacion_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts_personalizados %}
+    <script type="module" src="{% static 'habitaciones/js/main_habitaciones.js' %}"></script>
+{% endblock %}

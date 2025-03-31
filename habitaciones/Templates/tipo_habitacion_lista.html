@@ -1,0 +1,78 @@
+{% extends 'index.html' %}
+
+{% block tipos_habitacion_content %}
+<button type="button" class="btn btn-agregar mb-3" id="tipo-habitacion-agregar" data-bs-toggle="modal"
+    data-bs-target="#tipo-hab-modal" data-content="tipo-hab-modal-content" data-url="{% url 'tipo_habitacion_crear' %}">
+    <i class="fas fa-plus"></i> Agregar
+</button>
+
+<div id="tipo-habitacion-lista">
+    <table class="table table-bordered ">
+        <thead>
+            <tr>
+                <th>Fotos</th>
+                <th>Tipo</th>
+                <th>Precio</th>
+                <th>Capacidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tipo in tipos_habitacion %}
+            <tr class="text-center align-middle">
+                <td> {% include 'tipo_habitacion_galeria_fotos.html' %} </td>
+                <td>{{ tipo.nombre }}</td>
+                <td>${{ tipo.precio}}</td>
+                <td>{{ tipo.capacidad_maxima }} personas</td>
+                <td>
+                    <button type="button" class="btn btn-editar" id="tipo-habitacion-editar" data-bs-toggle="modal"
+                    data-bs-target="#tipo-hab-modal" data-content="tipo-hab-modal-content" data-url="{% url 'tipo_habitacion_editar' tipo.id %}">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-eliminar" id="tipo-habitacion-eliminar" data-bs-toggle="modal"
+                    data-bs-target="#tipo-hab-modal-eliminar" data-content="tipo-hab-modal-content-eliminar" data-url="{% url 'tipo_habitacion_eliminar' tipo.id %}">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para formulario de Agregar/Editar -->
+<div class="modal fade" id="tipo-hab-modal" tabindex="-1" aria-labelledby="formTipoHabitacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="tipo-hab-modal-content">
+            <!-- Contenido dinámico con JS -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Eliminar -->
+<div class="modal fade" id="tipo-hab-modal-eliminar" tabindex="-1" aria-labelledby="confirmarEliminarTipoHabitacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que quieres eliminar este tipo de habitación?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="tipo-hab-modal-content-eliminar" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-eliminar">Eliminar</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

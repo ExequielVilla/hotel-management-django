@@ -1,0 +1,25 @@
+{% load crispy_forms_tags %}
+<!--
+<div class="modal-header">
+    <h5 class="modal-title">
+        {% if form.instance.pk %}
+            Editar Huesped
+        {% else %}
+            Registrar Huesped
+        {% endif %}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body" >
+    <form id="form-huesped" method="POST" enctype="multipart/form-data" action="{% if form.instance.pk %}{% url 'huesped_editar' form.instance.pk %}{% else %}{% url 'huesped_crear' %}{% endif %}">
+        {% csrf_token %}
+        {% crispy form %} 
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" form="form-huesped" class="btn btn-principal">Guardar</button>
+        </div>
+    </form>
+</div>
+-->

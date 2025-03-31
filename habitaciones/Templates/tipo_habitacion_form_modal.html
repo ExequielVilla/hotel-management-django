@@ -1,0 +1,69 @@
+{% load crispy_forms_tags %}
+
+<div class="modal-header">
+    <h5 class="modal-title">
+        {% if form.instance.pk %}
+            Editar Tipo de Habitación
+        {% else %}
+            Registrar Tipo de Habitación
+        {% endif %}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body" >
+    <form id="form-tipo-habitacion" method="POST" enctype="multipart/form-data"
+    action="{% if form.instance.pk %}{% url 'tipo_habitacion_editar' form.instance.pk %}{% else %}{% url 'tipo_habitacion_crear' %}{% endif %}">
+
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.nombre|as_crispy_field }}
+                {{ form.precio|as_crispy_field }}
+                {{ form.capacidad_maxima|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Servicios</label>
+                <div class="border p-2">
+                    {{ form.servicios }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de selección de fotos -->
+        <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <label class="form-label mb-0">Seleccionar fotos:</label>
+                <input type="file" name="fotos_nuevas" id="id_nuevas_fotos" class="d-none" multiple accept="image/*">
+                <button type="button" class="btn btn-sm btn-success ms-3 d-flex align-items-center" id="btn-agregar-foto">
+                    <i class="fas fa-plus"></i> Agregar Foto
+                </button>
+            </div>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+            <!-- Sección de fotos -->
+            <div id="galeria-fotos" class="d-flex flex-wrap gap-2">
+                {% if not fotos_disponibles %}
+                    <div id="mensaje-sin-fotos" class="alert alert-warning text-center mt-2 w-100 py-4">
+                        No hay fotos cargadas aún.
+                    </div>
+                {% else %}
+                    {% for foto in fotos_disponibles %}
+                    <div class="p-1 border rounded {% if foto.id in fotos_seleccionadas %} border-primary border-3{% endif %}" data-id="{{ foto.id }}">
+                        <img src="{{ foto.imagen.url }}" class="img-thumbnail img-miniatura border-0 p-0">
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <input id="fotos-seleccionadas" type="hidden" name="fotos-seleccionadas"  data-seleccionadas="{{ fotos_seleccionadas|join:',' }}"> <!-- Campo oculto para almacenar IDs de fotos seleccionadas -->
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" form="form-tipo-habitacion" class="btn btn-principal">Guardar</button>
+        </div>
+    </form>
+</div>
+
+

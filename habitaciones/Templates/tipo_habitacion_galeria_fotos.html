@@ -1,0 +1,41 @@
+{% if tipo.fotos.all %}
+    {% with tipo.fotos.all|first as primera_foto %}
+        <div class="position-relative d-inline-block">
+            <img src="{{ primera_foto.imagen.url }}" class="img-thumbnail img-miniatura" data-bs-toggle="modal" data-bs-target="#modalFotos{{ tipo.id }}">
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill contador">
+                {{ tipo.fotos.count }}
+            </span>
+        </div>
+    {% endwith %}
+
+    <!-- Modal para ver imágenes -->
+    <div class="modal fade" id="modalFotos{{ tipo.id }}" tabindex="-1" aria-labelledby="modalFotosLabel{{ tipo.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFotosLabel{{ tipo.id }}">Fotos de Habitación {{ tipo.nombre }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-1">
+                    <div id="carouselFotos{{ tipo.id }}" class="carousel slide">
+                        <div class="carousel-inner">
+                            {% for foto in tipo.fotos.all %}
+                                <div class="carousel-item bg-black {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ foto.imagen.url }}" class="img-fluid d-block mx-auto carrusel" >
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselFotos{{ tipo.id }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselFotos{{ tipo.id }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <span>Sin imagen</span>
+{% endif %}
