@@ -1,10 +1,12 @@
 {% extends 'index.html' %}
 
 {% block servicios_habitacion_content %}
+{% if request.user.is_authenticated and request.user.groups.first.name == 'Administrador' %}
 <button type="button" class="btn btn-agregar mb-3" id="servicio-habitacion-agregar" data-bs-toggle="modal"
     data-bs-target="#servicio-hab-modal" data-content="servicio-hab-modal-content" data-url="{% url 'servicio_habitacion_crear' %}">
     <i class="fas fa-plus"></i> Agregar
 </button>
+{% endif %}
 
 <div id="servicio-habitacion-lista">
     <table class="table table-bordered">
@@ -23,19 +25,23 @@
                     <i class="fas {{ servicio.icono }}"></i>
                 </td>
                 <td class="text-center align-middle">
-                    <button type="button" class="btn btn-editar" id="servicio-habitacion-editar" data-bs-toggle="modal"
-                        data-bs-target="#servicio-hab-modal" data-content="servicio-hab-modal-content" data-url="{% url 'servicio_habitacion_editar' servicio.id %}">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button type="button" class="btn btn-eliminar" id="servicio-habitacion-eliminar" data-bs-toggle="modal"
-                    data-bs-target="#servicio-hab-modal-eliminar" data-content="servicio-hab-modal-content-eliminar" data-url="{% url 'servicio_habitacion_eliminar' servicio.id %}">
-                        <i class="fas fa-trash"></i> Eliminar
-                    </button>
+                    {% if request.user.is_authenticated and request.user.groups.first.name == 'Administrador' %}
+                        <button type="button" class="btn btn-editar btn-sm" id="servicio-habitacion-editar" data-bs-toggle="modal"
+                            data-bs-target="#servicio-hab-modal" data-content="servicio-hab-modal-content" data-url="{% url 'servicio_habitacion_editar' servicio.id %}">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-eliminar btn-sm" id="servicio-habitacion-eliminar" data-bs-toggle="modal"
+                        data-bs-target="#servicio-hab-modal-eliminar" data-content="servicio-hab-modal-content-eliminar" data-url="{% url 'servicio_habitacion_eliminar' servicio.id %}">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>	
+                    {% endif %}
+                    
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% include 'paginacion.html'%}
 </div>
 
 

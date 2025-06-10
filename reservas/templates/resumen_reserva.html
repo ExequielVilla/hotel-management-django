@@ -1,0 +1,20 @@
+{% load humanize l10n %}
+
+<div class="px-4">
+    <h5 class="mb-3"><strong>Resumen de Reserva:</strong></h5>
+    <div class="ms-4">
+        <div class="d-flex mb-3">
+            <p class="mb-0 me-3"><strong>Check-in:</strong> {{ check_in }}</p>
+            <p class="mb-0 me-3"><strong>Check-out:</strong> {{ check_out }}</p>
+            <p class="mb-0 me-3"><strong>Noches:</strong> {{ noches }}</p>
+            <p class="mb-0"><strong>Huéspedes:</strong> {{ cantidad_huespedes }}</p>
+        </div>
+        <ul>
+            {% for hab in habitaciones_seleccionadas %}
+                <li>{{ hab.cantidad }} {{ hab.nombre }} – {{ hab.totalHabitacion_str }}</li>
+            {% endfor %}
+        </ul>
+        <p><strong>Total:</strong> {{ total_str }}</p>
+        <input type="hidden" name="total_reserva" id="id_total_reserva">
+    </div>
+</div>

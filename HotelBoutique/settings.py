@@ -34,10 +34,6 @@ INSTALLED_APPS = [
     'usuarios',
     'habitaciones',
     'reservas',
-    'checkin',
-    'checkout',
-    'ventas',
-    'reportes',
     'crispy_forms',
     'crispy_bootstrap5',
     'django.contrib.admin',
@@ -46,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django.contrib.humanize',
+    'django_filters',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -126,18 +125,19 @@ AUTH_PASSWORD_RESET_CONFIRM_TEMPLATE = 'registration/password_reset_confirm.html
 AUTH_PASSWORD_RESET_COMPLETE_TEMPLATE = 'registration/password_reset_complete.html'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = 'smtp.gmail.com'  # proveedor de correo
-#EMAIL_PORT = 587
-#EMAIL_USE_TLS = True
-#EMAIL_HOST_USER = 'el_email@gmail.com'
-#EMAIL_HOST_PASSWORD = 'la_contraseña'
+EMAIL_HOST = 'smtp.gmail.com'  # proveedor de correo
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 
 USE_I18N = True
 
@@ -174,3 +174,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Donde Django recopilará los archivos 
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5' #para formularios crispy
+
+# Para formatos de moneda
+USE_L10N = True

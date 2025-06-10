@@ -18,6 +18,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('habitaciones.urls')), #incluye todas las urls del modulo habitaciones
     path('', include('usuarios.urls')), #incluye todas las urls del modulo usuarios
+    path('', include('reservas.urls')), #incluye todas las urls del modulo reservas
     path('accounts/', include('django.contrib.auth.urls')),
 ]
 

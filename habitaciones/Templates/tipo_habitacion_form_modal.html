@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 
 <div class="modal-header">
-    <h5 class="modal-title">
+    <h5 class="modal-title fw-semibold">
         {% if form.instance.pk %}
             Editar Tipo de Habitación
         {% else %}
@@ -19,47 +19,73 @@
         <div class="row">
             <div class="col-md-6">
                 {{ form.nombre|as_crispy_field }}
+            </div>
+            <div class="col-3">
                 {{ form.precio|as_crispy_field }}
+            </div>
+            <div class="col-3">
                 {{ form.capacidad_maxima|as_crispy_field }}
             </div>
-            <div class="col-md-6">
-                <label class="form-label">Servicios</label>
-                <div class="border p-2">
-                    {{ form.servicios }}
+            <div class="row">
+        </div>
+
+        <div class="row justify-content-center align-items-stretch mb-3">
+            <!-- Tipos de Camas -->
+            <div class="col-6 d-flex">
+                <div class="card w-100">
+                    <div class="card-header"><b>Tipos de Camas</b></div>
+                    <div class="card-body overflow-auto scroll-form-tipo-hab pb-0">
+                        {% crispy form_camas %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Servicios -->
+            <div class="col-6 d-flex">
+                <div class="card w-100">
+                    <div class="card-header"><b>Servicios</b></div>
+                    <div class="card-body overflow-auto scroll-form-tipo-hab">
+                        {{ form.servicios }}
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Sección de selección de fotos -->
         <div class="mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <label class="form-label mb-0">Seleccionar fotos:</label>
-                <input type="file" name="fotos_nuevas" id="id_nuevas_fotos" class="d-none" multiple accept="image/*">
-                <button type="button" class="btn btn-sm btn-success ms-3 d-flex align-items-center" id="btn-agregar-foto">
-                    <i class="fas fa-plus"></i> Agregar Foto
-                </button>
-            </div>
-            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-
-            <!-- Sección de fotos -->
-            <div id="galeria-fotos" class="d-flex flex-wrap gap-2">
-                {% if not fotos_disponibles %}
-                    <div id="mensaje-sin-fotos" class="alert alert-warning text-center mt-2 w-100 py-4">
-                        No hay fotos cargadas aún.
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="form-label mb-0"><b>Fotos</b></label>
+                        <input type="file" name="fotos_nuevas" id="id_nuevas_fotos" class="d-none" multiple accept="image/*">
+                        <button type="button" class="btn btn-sm btn-success ms-3 d-flex" id="btn-agregar-foto">
+                            <i class="fas fa-plus"></i> Agregar Foto
+                        </button>
                     </div>
-                {% else %}
-                    {% for foto in fotos_disponibles %}
-                    <div class="p-1 border rounded {% if foto.id in fotos_seleccionadas %} border-primary border-3{% endif %}" data-id="{{ foto.id }}">
-                        <img src="{{ foto.imagen.url }}" class="img-thumbnail img-miniatura border-0 p-0">
-                    </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            <input id="fotos-seleccionadas" type="hidden" name="fotos-seleccionadas"  data-seleccionadas="{{ fotos_seleccionadas|join:',' }}"> <!-- Campo oculto para almacenar IDs de fotos seleccionadas -->
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                </div>
 
+                <!-- Fotos -->
+                <div class="card-body">
+                    <div id="galeria-fotos" class="d-flex flex-wrap gap-2">
+                        {% if not fotos_disponibles %}
+                            <div id="mensaje-sin-fotos" class="alert alert-warning text-center mt-2 w-100 py-4">
+                                No hay fotos cargadas aún.
+                            </div>
+                        {% else %}
+                            {% for foto in fotos_disponibles %}
+                            <div class="p-1 border rounded {% if foto.id in fotos_seleccionadas %} border-primary border-3{% endif %}" data-id="{{ foto.id }}">
+                                <img src="{{ foto.imagen.url }}" class="img-thumbnail img-miniatura border-0 p-0">
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <input id="fotos-seleccionadas" type="hidden" name="fotos-seleccionadas"  data-seleccionadas="{{ fotos_seleccionadas|join:',' }}"> <!-- Campo oculto para almacenar IDs de fotos seleccionadas -->
+                </div>
+            </div>
         </div>
 
-        <div class="modal-footer">
+        <div class="modal-footer pb-0">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             <button type="submit" form="form-tipo-habitacion" class="btn btn-principal">Guardar</button>
         </div>

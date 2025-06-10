@@ -1,16 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Habitacion, TipoHabitacion, ServicioHab, FotoHabitacion
-from .forms import HabitacionForm, TipoHabForm, ServicioHabForm, FotoHabForm
+from .models import Habitacion, TipoHabitacion, ServicioHab, FotoHabitacion, CamaTipoHabitacion, TipoCama
+from .forms import HabitacionForm, TipoHabForm, ServicioHabForm, TipoCamaForm
 from django.urls import reverse_lazy
 from django.views.generic import View, ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from PIL import Image
-# from io import BytesIO
 import io
 from django.utils.text import slugify
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.contrib import messages
 
 # Para Login:
 from django.contrib.auth.decorators import login_required
@@ -19,19 +19,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth import authenticate, login
 
-
+# Agregar el PermissionRequiredMixin
 class Test(ListView):
     model = FotoHabitacion
     template_name = 'test.html'
     context_object_name = 'fotos'
 
-@login_required
+
 def indice(request):
     return render(request, 'habitacion_lista.html')
 
 ############################################################
 ####################### HABITACIONES #######################
-class HabitacionListView(ListView):
+class HabitacionListView(LoginRequiredMixin, ListView):
     model = Habitacion
     template_name = 'habitacion_lista.html'
     context_object_name = 'habitaciones'
@@ -42,7 +42,7 @@ class HabitacionListView(ListView):
         return context
 
 
-class HabitacionCreateView(CreateView):
+class HabitacionCreateView(LoginRequiredMixin, CreateView):
     model = Habitacion
     form_class = HabitacionForm  # el nombre de la variable es "form"
     template_name = 'habitacion_form_modal.html'
@@ -55,11 +55,11 @@ class HabitacionCreateView(CreateView):
     def form_invalid(self, form):
         return JsonResponse({'success': False, 'errors': form.errors}) # Devuelve errores en formato JSON si el formulario no es válido
 
-class HabitacionDetailView(DetailView):
+class HabitacionDetailView(LoginRequiredMixin, DetailView):
     model = Habitacion
     template_name = ''
 
-class HabitacionUpdateView(UpdateView):
+class HabitacionUpdateView(LoginRequiredMixin, UpdateView):
     model = Habitacion
     form_class = HabitacionForm
     template_name = 'habitacion_form_modal.html'
@@ -76,29 +76,50 @@ class HabitacionUpdateView(UpdateView):
     def form_invalid(self, form):
         return JsonResponse({'success': False, 'errors': form.errors})
 
-class HabitacionDeleteView(View):
+class HabitacionDeleteView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         habitacion = get_object_or_404(Habitacion, pk=pk)
         habitacion.activo = False
         habitacion.save()
         return redirect("habitacion_lista")
 
+class HabitacionLimpiezaView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        habitacion = get_object_or_404(Habitacion, pk=pk)
+        if habitacion and habitacion.estado == "En limpieza":
+            habitacion.estado = "Habilitada"
+            habitacion.save()
+            return JsonResponse({
+                "success": True,
+                "message": f"La habitación {habitacion.numero} ({habitacion.tipo_habitacion.nombre}) fue habilitada con éxito."
+            })
+        return JsonResponse({
+            "success": False,
+            "message": "La habitación no está en estado 'En limpieza'."
+        })
 
 
 ############################################################
 ####################### TIPOS DE HABITACIONES #######################
-class TipoHabitacionListView(ListView):
+class TipoHabitacionListView(LoginRequiredMixin, ListView):
     model = TipoHabitacion
     template_name = 'tipo_habitacion_lista.html'
     context_object_name = 'tipos_habitacion'
 
+    def get_queryset(self):
+        return TipoHabitacion.objects.all().prefetch_related('fotos', 'camatipohabitacion_set')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tipos_habitacion'] = TipoHabitacion.objects.filter(activo=True)
+
+        for tipo in context['tipos_habitacion']:
+            camas = tipo.camatipohabitacion_set.all()
+            tipo.camas_str = ", ".join([
+                f"{cama.get_tipo_cama_display()} ({cama.cantidad})" for cama in camas
+            ])
+
         return context
 
-    def get_queryset(self):
-        return TipoHabitacion.objects.all().prefetch_related('fotos')
 
 def procesarImagen(imagen):
     try:
@@ -109,7 +130,7 @@ def procesarImagen(imagen):
         if img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
 
-        # Definir tamaño máximo sin distorsionar
+        # Define tamaño máximo sin distorsionar
         target_size = (600, 600)
         img.thumbnail(target_size, Image.LANCZOS)
 
@@ -119,7 +140,7 @@ def procesarImagen(imagen):
         y_offset = (target_size[1] - img.size[1]) // 2
         new_img.paste(img, (x_offset, y_offset))
 
-        # Guardar con compresión óptima
+        # Guarda con compresión óptima
         output = io.BytesIO()
         new_img.save(output, format="JPEG", quality=90, optimize=True)
         output.seek(0)
@@ -129,6 +150,7 @@ def procesarImagen(imagen):
     except Exception as e:
         print(f"Error al procesar la imagen: {e}")
         return None
+
 
 def subirFoto(request):
     fotos_subidas = request.FILES.getlist("fotos")
@@ -149,7 +171,7 @@ def subirFoto(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-class TipoHabitacionCreateView(CreateView):
+class TipoHabitacionCreateView(LoginRequiredMixin, CreateView):
     model = TipoHabitacion
     form_class = TipoHabForm # nombre de la variable es "form"
     template_name = "tipo_habitacion_form_modal.html"
@@ -158,26 +180,41 @@ class TipoHabitacionCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['fotos_disponibles'] = FotoHabitacion.objects.all()  # Todas las fotos ya registradas
+        context['form_camas'] = kwargs.get('form_camas', TipoCamaForm())
         return context
 
-    def form_valid(self, form):
-        tipo_habitacion = form.save() # Guardar el nuevo tipo de habitación
-        fotos_seleccionadas = self.request.POST.get("fotos-seleccionadas", "") # Obtener las fotos seleccionadas desde el formulario
-        if fotos_seleccionadas: # Convertir la cadena de IDs en una lista y asociar las fotos
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form()
+        form_camas = TipoCamaForm(request.POST)
+
+        if not form.is_valid() or not form_camas.is_valid():
+            return self.form_invalid(form, form_camas)
+        return self.form_valid(form, form_camas)
+
+    def form_valid(self, form, form_camas):
+        tipo_hab = form.save()
+        # Guardar camas con cantidad > 0
+        for tipo, _ in TipoCama.choices:
+            cantidad = form_camas.cleaned_data.get(tipo.lower())
+            if cantidad and cantidad > 0:
+                CamaTipoHabitacion.objects.create(
+                    tipo_habitacion=tipo_hab,
+                    tipo_cama=tipo,
+                    cantidad=cantidad
+                )
+        # Guardar fotos
+        fotos_seleccionadas = self.request.POST.get("fotos-seleccionadas", "")
+        if fotos_seleccionadas:
             foto_ids = fotos_seleccionadas.split(",")
             fotos = FotoHabitacion.objects.filter(id__in=foto_ids)
-            tipo_habitacion.fotos.set(fotos)
-        return super().form_valid(form)
+            tipo_hab.fotos.set(fotos)
+        return redirect(self.success_url)
 
-    def form_invalid(self, form):
-        return JsonResponse({'success': False, 'errors': form.errors})
+    def form_invalid(self, form, form_camas):
+        return JsonResponse({'success': False, 'errors': form.errors, 'errors_camas': form_camas.errors})
 
-class TipoHabitacionDetailView(DetailView):
-    model = TipoHabitacion
-    template_name = 'tipo_habitacion_detalle.html'
-    context_object_name = 'tipoHab'
-
-class TipoHabitacionUpdateView(UpdateView):
+class TipoHabitacionUpdateView(LoginRequiredMixin, UpdateView):
     model = TipoHabitacion
     form_class = TipoHabForm
     template_name = "tipo_habitacion_form_modal.html"
@@ -188,23 +225,52 @@ class TipoHabitacionUpdateView(UpdateView):
         tipo_habitacion = self.get_object()
         context['fotos_disponibles'] = FotoHabitacion.objects.all()
         context['fotos_seleccionadas'] = tipo_habitacion.fotos.all().values_list('id',flat=True)
+        # Formulario de camas con los valores actuales
+        camas_existentes = CamaTipoHabitacion.objects.filter(tipo_habitacion=tipo_habitacion)
+        data_inicial = {cama.tipo_cama.lower(): cama.cantidad for cama in camas_existentes}
+        context['form_camas'] = kwargs.get('form_camas', TipoCamaForm(initial=data_inicial))
         return context
 
-    def form_valid(self, form):
-        tipo_habitacion = form.save() # Guarda/actualiza el tipo de habitación
-        fotos_seleccionadas = self.request.POST.get("fotos-seleccionadas", "") # Obtener las fotos seleccionadas desde el formulario
-        if fotos_seleccionadas: # Convertir la cadena de IDs en una lista y asociar las fotos
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        form_camas = TipoCamaForm(request.POST)
+
+        if not form.is_valid() or not form_camas.is_valid():
+            return self.form_invalid(form, form_camas)
+        return self.form_valid(form, form_camas)
+
+    def form_valid(self, form, form_camas):
+        tipo_hab = form.save()
+        CamaTipoHabitacion.objects.filter(tipo_habitacion=tipo_hab).delete() # Eliminar camas anteriores
+        # Guardar nuevas camas si cantidad > 0
+        for tipo, _ in TipoCama.choices:
+            cantidad = form_camas.cleaned_data.get(tipo.lower())
+            if cantidad and cantidad > 0:
+                CamaTipoHabitacion.objects.create(
+                    tipo_habitacion=tipo_hab,
+                    tipo_cama=tipo,
+                    cantidad=cantidad
+                )
+        # Fotos
+        fotos_seleccionadas = self.request.POST.get("fotos-seleccionadas", "")
+        if fotos_seleccionadas:
             foto_ids = fotos_seleccionadas.split(",")
             fotos = FotoHabitacion.objects.filter(id__in=foto_ids)
-            tipo_habitacion.fotos.set(fotos)
+            tipo_hab.fotos.set(fotos)
         else:
-            tipo_habitacion.fotos.clear()  # Si se deseleccionaron todas, limpiar
-        return super().form_valid(form)
+            tipo_hab.fotos.clear()
 
-    def form_invalid(self, form):
-        return JsonResponse({'success': False, 'errors': form.errors})
+        return redirect(self.success_url)
 
-class TipoHabitacionDeleteView(View):
+    def form_invalid(self, form, form_camas):
+        return JsonResponse({
+            'success': False,
+            'errors': form.errors,
+            'errors_camas': form_camas.errors
+        })
+
+class TipoHabitacionDeleteView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         tipo_habitacion = get_object_or_404(TipoHabitacion, pk=pk)
         tipo_habitacion.activo = False
@@ -215,14 +281,17 @@ class TipoHabitacionDeleteView(View):
 
 ##############################################################################################
 ####################### SERVICIOS DE HABITACIONES ##########################
-class ServicioHabitacionListView(ListView):
+class ServicioHabitacionListView(LoginRequiredMixin, ListView):
     model = ServicioHab
     template_name = 'servicio_habitacion_lista.html'
     context_object_name = 'servicios_habitacion'
+    paginate_by = 9
+
+    def get_queryset(self):
+        return ServicioHab.objects.filter(activo=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['servicios_habitacion'] = ServicioHab.objects.filter(activo=True)
         return context
 
 
@@ -237,7 +306,7 @@ ICONOS_FONT_AWESOME = [
     "fa-utensils", "fa-van-shuttle", "fa-water-ladder", "fa-wheelchair", "fa-wheelchair-move", "fa-wifi", "fa-wine-glass"
 ]
 
-class ServicioHabitacionCreateView(CreateView):
+class ServicioHabitacionCreateView(LoginRequiredMixin, CreateView):
     model = ServicioHab
     form_class = ServicioHabForm
     template_name = 'servicio_habitacion_form_modal.html'
@@ -254,13 +323,12 @@ class ServicioHabitacionCreateView(CreateView):
         return super().form_valid(form)  # Guarda si hay cambios
 
     def form_invalid(self, form):
-        # print("entroooo1")
         # if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
         #     html_form = render_to_string(self.template_name, {"form": form}, request=self.request)
         #     return JsonResponse({"success": False, "form_html": html_form}, status=400)
         return super().form_invalid(form)
 
-class ServicioHabitacionUpdateView(UpdateView):
+class ServicioHabitacionUpdateView(LoginRequiredMixin, UpdateView):
     model = ServicioHab
     form_class = ServicioHabForm
     template_name = "servicio_habitacion_form_modal.html"
@@ -274,6 +342,8 @@ class ServicioHabitacionUpdateView(UpdateView):
     def form_valid(self, form):
         if not form.has_changed():  # Verifica si hay cambios
             return redirect(self.success_url)  # Redirige sin guardar
+        if not form.cleaned_data.get('icono'):
+            form.instance.icono = 'fa-check'
         return super().form_valid(form)  # Guarda si hay cambios
 
     def form_invalid(self, form):
@@ -282,7 +352,7 @@ class ServicioHabitacionUpdateView(UpdateView):
             return JsonResponse({"success": False, "form_html": html_form}, status=400)
         return super().form_invalid(form)
 
-class ServicioHabitacionDeleteView(View):
+class ServicioHabitacionDeleteView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         servicio_habitacion = get_object_or_404(ServicioHab, pk=pk)
         servicio_habitacion.activo = False

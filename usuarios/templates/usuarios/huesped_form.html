@@ -1,0 +1,25 @@
+{% load crispy_forms_tags %}
+
+<form id="form-huesped" method="POST" enctype="multipart/form-data" action="{% if form.instance.pk %}{% url 'huesped_editar' form.instance.pk %}{% else %}{% url 'huesped_crear' %}{% endif %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6 col-lg-4">
+            {{ form.nombre|as_crispy_field }}
+        </div>
+        <div class="col-md-6 col-lg-4">
+            {{ form.apellido|as_crispy_field }}
+        </div>
+        <div class="col-md-6 col-lg-4">
+            {{ form.dni_pasaporte|as_crispy_field }}
+        </div>
+        <div class="col-md-6 col-lg-4">
+            {{ form.email|as_crispy_field }}
+        </div>
+        <div class="col-md-6 col-lg-4">
+            {{ form.telefono|as_crispy_field }}
+        </div>
+        <div class="col-md-12 col-lg-12">
+            {{ form.preferencias|as_crispy_field }}
+        </div>
+    </div>
+</form>

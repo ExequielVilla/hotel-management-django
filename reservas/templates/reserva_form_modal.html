@@ -1,25 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
-<!--
-<div class="modal-header">
-    <h5 class="modal-title">
-        {% if form.instance.pk %}
-            Editar Huesped
-        {% else %}
-            Registrar Huesped
-        {% endif %}
-    </h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-</div>
 
-<div class="modal-body" >
-    <form id="form-huesped" method="POST" enctype="multipart/form-data" action="{% if form.instance.pk %}{% url 'huesped_editar' form.instance.pk %}{% else %}{% url 'huesped_crear' %}{% endif %}">
+{% block content %}
+<div class="container-fluid ps-4 pe-5 py-0 d-flex flex-column">
+    <h2 class="mb-3 ">Registrar Reserva</h2>
+    <form id="form-reserva" method="POST" enctype="multipart/form-data" action="{% if form.instance.pk %}{% url 'reserva_editar' form.instance.pk %}{% else %}{% url 'reserva_crear' %}{% endif %}" class="d-flex flex-column h-100">
         {% csrf_token %}
-        {% crispy form %} 
+        <!-- Contenedor principal de las secciones con scroll -->
+        <div class="row flex-grow-1 overflow-hidden mb-3">
+
+            <!-- Sección de datos de alojamiento -->
+            <div class="col-12 overflow-auto p-0 mb-4 scroll-form-reservas-alojamiento">
+                <div class="card bg-cyan txt-darkblue">
+                    <div class="card-header bg-cyan txt-darkblue">
+                        <h5 class="mb-0 fw-semibold">Datos de Alojamiento</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                {{ form.fecha_check_in_esperada|as_crispy_field }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ form.fecha_check_out_esperada|as_crispy_field }}
+                            </div>
+                            <div class="col-md-1">
+                                <label for="noches" class="form-label">Noches:</label>
+                                <div class="form-control bg-transparent" id="noches">0</div>
+                            </div>
+                            <div class="col-md-2">
+                                {{ form.cantidad_huespedes|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div id="tipos-habitaciones-disponibles" class="mt-1">
+                            <!-- Se carga con JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de datos del huesped -->
+            <div class="col-12 overflow-auto p-0 mb-4 ">
+                <div class="card bg-cyan txt-darkblue">
+                    <div class="card-header bg-cyan txt-darkblue">
+                        <h5 class="mb-0 fw-semibold">Datos del Huésped</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <select id="huesped-seleccionado" name="huesped_seleccionado" class="select2" >
+                                <option value="">--- Buscar Huésped ---</option>
+                                {% for huesped in huespedes %}
+                                    <option value="{{ huesped.pk }}">
+                                        {{ huesped.nombre }} {{ huesped.apellido }} - {{ huesped.dni_pasaporte }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% include 'usuarios/huesped_form.html' with form=huesped_form %} <!-- Formulario de Nuevo Huésped -->
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Sección de pago -->
+            <div class="col-12 overflow-auto p-0 mb-4 ">
+                <div class="card bg-cyan txt-darkblue">
+                    <div class="card-header bg-cyan txt-darkblue">
+                        <h5 class="mb-0 fw-semibold">Información de Pago</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ pago_form.metodo_pago|as_crispy_field }}
+                            </div>
+                            <div id="resumen-reserva" class="col-md-8">
+                                <!-- Se carga con JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="submit" form="form-huesped" class="btn btn-principal">Guardar</button>
+            <button hidden type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Volver</button>
+            <button type="submit" form="form-reserva" class="btn btn-principal">Reservar</button>
         </div>
     </form>
 </div>
--->
+
+
+{% endblock %}
+
+{% block scripts_personalizados %}
+    <script type="module"  src="{% static 'reservas/js/reserva_form.js' %}"></script>
+{% endblock %}

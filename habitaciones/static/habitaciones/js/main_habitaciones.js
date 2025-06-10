@@ -1,4 +1,4 @@
-import { cargarContenidoModal, deshabilitarRegistro } from "/static/js/main.js";
+import { cargarContenidoModal, deshabilitarRegistro, SweetAlert2PopUp} from "/static/js/main.js";
 import { initTipoHab } from './tipo_habitacion.js';
 import { initServicioHab } from './servicio_habitacion.js';
 
@@ -35,5 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             deshabilitarRegistro(content,url);
         }
     });
+
+    SweetAlert2PopUp("btn-limpieza");
 });
 

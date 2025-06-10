@@ -23,7 +23,13 @@ class HuespedForm(forms.ModelForm):
         model = Huesped
         fields = ['nombre', 'apellido', 'dni_pasaporte', 'email', 'telefono', 'preferencias']
         labels = {
-            'dni_pasaporte': 'DNI/Pasaporte'
+            'dni_pasaporte': 'DNI/Pasaporte',
+            'telefono': 'Teléfono'
+        }
+        widgets = {
+            'preferencias': forms.Textarea(attrs={
+                'rows': 3,  # Altura en líneas
+            }),
         }
 
     def __init__(self, *args, **kwargs):

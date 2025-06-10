@@ -1,9 +1,12 @@
 {% extends 'index.html' %}
 
 {% block habitaciones_content %}
+
+{% if request.user.is_authenticated and request.user.groups.first.name == 'Administrador' %}
 <button type="button" class="btn btn-agregar mb-3" id="habitacion-agregar" data-bs-toggle="modal" data-bs-target="#habitacion-modal" data-content="habitacion-modal-content" data-url="{% url 'habitacion_crear' %}">
     <i class="fas fa-plus"></i> Agregar
 </button>
+{% endif %}
 
 <div id="habitacion-lista">
     <table class="table table-bordered">
@@ -24,14 +27,24 @@
                 <td>{{ habitacion.estado }}</td>
                 <td>{{ habitacion.tipo_habitacion.capacidad_maxima }}</td>
                 <td>
-                    <button type="button" class="btn btn-editar" id="habitacion-editar" data-bs-toggle="modal"
-                        data-bs-target="#habitacion-modal" data-content="habitacion-modal-content" data-url="{% url 'habitacion_editar' habitacion.id %}">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button type="button" class="btn btn-eliminar" id="habitacion-eliminar" data-bs-toggle="modal"
-                    data-bs-target="#habitacion-modal-eliminar" data-content="habitacion-modal-content-eliminar" data-url="{% url 'habitacion_eliminar' habitacion.id %}">
-                        <i class="fas fa-trash"></i> Eliminar
-                    </button>
+                    {% if habitacion.estado == "En limpieza" %}
+                        {% csrf_token %}
+                        <button class="btn btn-principal btn-sm mb-1 btn-limpieza" data-url="{% url 'habitacion_limpieza' habitacion.id %}">
+                            <i class="fa-solid fa-house-circle-check"></i> Limpia
+                        </button>
+                    {% endif %}
+                    <!-- Message de exito en Limpieza -->
+                    {% if request.user.is_authenticated and request.user.groups.first.name == 'Administrador' %}
+                        <button type="button" class="btn btn-editar btn-sm" id="habitacion-editar" data-bs-toggle="modal"
+                            data-bs-target="#habitacion-modal" data-content="habitacion-modal-content" data-url="{% url 'habitacion_editar' habitacion.id %}">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-eliminar btn-sm" id="habitacion-eliminar" data-bs-toggle="modal"
+                        data-bs-target="#habitacion-modal-eliminar" data-content="habitacion-modal-content-eliminar" data-url="{% url 'habitacion_eliminar' habitacion.id %}">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    {% endif %}
+                    
                 </td>
             </tr>
             {% endfor %}

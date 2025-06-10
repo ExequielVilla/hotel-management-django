@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row px-4 justify-content-center">
+    <div class="col">
+        <h2 class="mb-3">Gestión de Huéspedes</h2>
+
+        <button type="button" class="btn btn-agregar mb-3" id="huesped-agregar" data-bs-toggle="modal"
+        data-bs-target="#huesped-modal" data-content="huesped-modal-content" data-url="{% url 'huesped_crear' %}">
+            <i class="fas fa-plus"></i> Agregar
+        </button>
+        <div class="mb-3">
+            <a href="{% url 'huesped_exportar_excel' %}" class="btn btn-success btn-sm">
+                <i class="fas fa-file-excel"></i> Exportar Excel
+            </a>
+            <a href="{% url 'huesped_exportar_pdf' %}" class="btn btn-danger btn-sm">
+                <i class="fas fa-file-pdf"></i> Exportar PDF
+            </a>
+        </div>
+        
+        <div id="huesped-lista">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>DNI/Pasaporte</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Preferencias</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for huesped in huespedes %}
+                    <tr class="text-center align-middle">
+                        <td>{{ huesped.nombre }}</td>
+                        <td>{{ huesped.apellido }}</td>
+                        <td>{{ huesped.dni_pasaporte }}</td>
+                        <td>{{ huesped.email }}</td>
+                        <td>
+                            {% if huesped.telefono %}
+                                {{ huesped.telefono }}
+                            {% else %}
+                                <span> - </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if huesped.preferencias %}
+                                {{ huesped.preferencias }}
+                            {% else %}
+                                <span> - </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-editar btn-sm" id="huesped-editar" data-bs-toggle="modal"
+                                data-bs-target="#huesped-modal" data-content="huesped-modal-content" data-url="{% url 'huesped_editar' huesped.id %}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            {% if request.user.is_authenticated and request.user.groups.first.name == 'Administrador' %}
+                            <button type="button" class="btn btn-eliminar btn-sm" id="huesped-eliminar" data-bs-toggle="modal"
+                            data-bs-target="#huesped-modal-eliminar" data-content="huesped-modal-content-eliminar" data-url="{% url 'huesped_eliminar' huesped.id %}">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para formulario de Agregar/Editar -->
+<div class="modal fade" id="huesped-modal" tabindex="-1" aria-labelledby="formHuespedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="huesped-modal-content">
+            <!-- Contenido dinámico con JS -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Eliminar -->
+<div class="modal fade" id="huesped-modal-eliminar" tabindex="-1" aria-labelledby="confirmarEliminarHuespedModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro que desea borrar este Huésped?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="huesped-modal-content-eliminar" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-eliminar">Eliminar</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_personalizados %}
+    <script type="module" src="{% static 'usuarios/js/main_huespedes.js' %}"></script>
+{% endblock %}

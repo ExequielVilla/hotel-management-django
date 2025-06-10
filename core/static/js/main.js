@@ -23,3 +23,35 @@ export function deshabilitarRegistro(formId, url) {
     }
     formEliminar.action = url;
 }
+
+export function getCookie(name) {
+    return document.cookie.split(';')
+        .find(c => c.trim().startsWith(`${name}=`))
+        ?.split('=')[1];
+}
+
+export function SweetAlert2PopUp(classname) {
+    const botones = document.querySelectorAll(`.${classname}`);
+    botones.forEach(btn => {
+        btn.addEventListener("click", () => {
+            fetch(btn.dataset.url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                Swal.fire({
+                    icon: data.success ? 'success' : 'error',
+                    title: data.success ? 'Éxito' : 'Error',
+                    text: data.message,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                if (data.success) setTimeout(() => location.reload(), 1500);
+            });
+        });
+    });
+}

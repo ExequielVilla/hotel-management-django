@@ -1,0 +1,43 @@
+{% if error %}
+  <div class="alert alert-warning">{{ error }}</div>
+{% elif data %}
+    {% load humanize l10n %}
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-7">
+            {% for tipo_hab in data %}
+            <div class="card shadow-sm mb-3" data-nombre="{{ tipo_hab.nombre }}" data-precio="{{ tipo_hab.precio }}">
+                <div class="card-body p-2">
+                    <div class="row">
+                        <div class="col-9">
+                            <strong class="card-text d-block mb-1"> {{ tipo_hab.nombre }} - {{ tipo_hab.precio_texto }} p/noche - Cap. {{ tipo_hab.capacidad_maxima }} pers </strong>
+                            <small class="text-muted d-block mb-1">Camas: {{ tipo_hab.camas_texto }}</small>
+                            <small class="text-muted d-block">Servicios: {{ tipo_hab.servicios_texto }}</small>
+                        </div>
+
+                        <!-- Columna vacía separadora -->
+                        <div class="col-1"></div>
+
+                        <div class="col-2 text-end d-flex flex-column align-items-end justify-content-center">
+                            <small class="mb-2 text-nowrap text-muted text-sm-end">
+                                Cantidad a reservar: <br>
+                                ({{ tipo_hab.cant_disponibles }} disponibles)
+                            </small>
+                            <input type="number" id="tipo-habitacion-{{ tipo_hab.id }}" class="form-control form-control-sm text-end input-tipo-habitacion" min="0" max="{{ tipo_hab.cant_disponibles }}" value="0"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-5">
+            <div id="resumen-habitaciones" class="card bg-light p-3">
+                <h6 class="fw-bold mb-4">Resumen de Habitaciones</h6>
+                <div id="detalle-habitaciones"></div>
+                <div id="subtotal-habitaciones" class="mt-3 fw-bold text-end"></div>
+            </div>
+        </div>
+    </div>
+{% else %}
+  <p class="text-muted">No hay habitaciones disponibles para las fechas seleccionadas.</p>
+{% endif %}

@@ -39,4 +39,4 @@ class Huesped(models.Model):
     activo = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.nombre} {self.apellido} - {self.email}"
+        return f"{self.nombre} {self.apellido} - {self.dni_pasaporte}"

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row px-4 justify-content-center">
+    <div class="col">
+        <h2 class="mb-3">Gestión de Check-in</h2>
+
+        <div id="checkin-lista">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Huésped</th>
+                        <th>CheckIn</th>
+                        <th>CheckOut</th>
+                        <th>N° Hues.</th>
+                        <th>Habitaciones</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for checkin in checkins %}
+                    <tr class="text-center align-middle">
+                        <td>{{ checkin.huesped }}</td>
+                        <td>{{ checkin.fecha_check_in_esperada|date:"d M Y" }}</td>
+                        <td>{{ checkin.fecha_check_out_esperada|date:"d M Y" }}</td>
+                        <td>{{ checkin.cantidad_huespedes }}</td>
+                        <td>{{ checkin.habitaciones_str }}</td>
+                        <td>{{ checkin.monto_total_str }}</td>
+                        <td>{{ checkin.estado }}</td>
+                        <td>
+                            <button type="button" class="btn btn-principal btn-sm" data-bs-toggle="modal" data-bs-target="#checkin-modal-registrar"
+                            data-url="{% url 'checkin_registrar' checkin.id %}" data-huesped="{{ checkin.huesped }}">
+                                <i class="fa-solid fa-arrow-right-to-bracket"></i> Check-in
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <tr><td colspan="8" class=" text-center">No hay reservas para hoy</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="checkin-modal-registrar" tabindex="-1" aria-labelledby="checkinModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" id="form-checkin-registrar">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkinModalLabel">Confirmar Check-in</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea confirmar el ingreso del huésped <strong id="huesped-nombre"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-principal">Confirmar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_personalizados %}
+<script type="module" src="{% static 'reservas/js/checkin.js' %}"></script>
+{% endblock %}

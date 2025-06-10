@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row px-4 justify-content-center">
+    <div class="col">
+        <h2 class="mb-3">Gestión de Check-out</h2>
+
+        <div id="checkout-lista">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Huésped</th>
+                        <th>CheckIn</th>
+                        <th>CheckOut</th>
+                        <th>N° Hues.</th>
+                        <th>Habitaciones</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for checkout in checkouts %}
+                    <tr class="text-center align-middle">
+                        <td>{{ checkout.huesped }}</td>
+                        <td>{{ checkout.fecha_check_in_efectuada|date:"d M Y" }}</td>
+                        <td>{{ checkout.fecha_check_out_esperada|date:"d M Y" }}</td>
+                        <td>{{ checkout.cantidad_huespedes }}</td>
+                        <td>{{ checkout.habitaciones_str }}</td>
+                        <td>{{ checkout.monto_total_str }}</td>
+                        <td>{{ checkout.estado }}</td>
+                        <td>
+                            <button type="button" class="btn btn-principal btn-sm" data-bs-toggle="modal" data-bs-target="#checkout-modal-registrar"
+                            data-url="{% url 'checkout_registrar' checkout.id %}" data-huesped="{{ checkout.huesped }}">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Check-out
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <tr><td colspan="8" class="text-center">No hay check-outs pendientes</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="checkout-modal-registrar" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" id="form-checkout-registrar">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkoutModalLabel">Confirmar Check-out</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea registrar la salida del huésped <strong id="huesped-nombre"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-principal">Confirmar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_personalizados %}
+<script src="{% static 'reservas/js/checkout.js' %}"></script>
+{% endblock %}

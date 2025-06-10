@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row px-4 justify-content-center">
+    <div class="col">
+        <h2 class="mb-3">Gestión de Reservas</h2>
+
+        <div class="d-flex justify-content-between mb-3">
+            <a href="{% url 'reserva_crear' %}" class="btn btn-agregar">
+                <i class="fas fa-plus"></i> Agregar
+            </a>
+            <div class="d-flex justify-content-end">
+                <div class="btn-group" role="group">
+                    <button id="btn-vista-tabla" class="btn btn-outline-primary active border-0"><i class="fa-solid fa-table-list"></i></button>
+                    <button id="btn-vista-agenda" class="btn btn-outline-primary border-0"><i class="fa-solid fa-calendar"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="reserva-lista" class="vista-tabla">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Huésped</th>
+                        <th class="text-center">
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="d-flex justify-content-center gap-1 mt-1">
+                                    <span>CheckIn</span>
+                                    <a href="?{% if request.GET.estado %}estado={{ request.GET.estado }}&{% endif %}o=fecha_check_in_esperada" class="text-dark text-decoration-none">
+                                        <i class="fas fa-arrow-up small"></i>
+                                    </a>
+                                    <a href="?{% if request.GET.estado %}estado={{ request.GET.estado }}&{% endif %}o=-fecha_check_in_esperada" class="text-dark text-decoration-none">
+                                        <i class="fas fa-arrow-down small"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="text-center">
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="d-flex justify-content-center gap-1 mt-1">
+                                    <span>CheckOut</span>
+                                    <a href="?o=fecha_check_out_esperada" class="text-dark text-decoration-none">
+                                        <i class="fas fa-arrow-up small"></i>
+                                    </a>
+                                    <a href="?o=-fecha_check_out_esperada" class="text-dark text-decoration-none">
+                                        <i class="fas fa-arrow-down small"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </th>
+                        <th>Hues.</th>
+                        <th>Habitaciones</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in reservas %}
+                    <tr class="text-center align-middle">
+                        <td>{{ reserva.huesped }}</td>
+                        <td>{{ reserva.fecha_check_in_esperada|date:"d M Y" }}</td>
+                        <td>{{ reserva.fecha_check_out_esperada|date:"d M Y" }}</td>
+                        <td>{{ reserva.cantidad_huespedes }}</td>
+                        <td>{{ reserva.habitaciones_str }}</td>
+                        <td>{{ reserva.monto_total_str }}</td>
+                        <td>{{ reserva.estado }}</td>
+                        <td>
+                            {% if reserva.estado == "Pendiente" %}
+                            <button type="button" class="btn btn-principal btn-sm mb-1" data-bs-toggle="modal" 
+                                    data-bs-target="#pago-modal"
+                                    data-reserva-id="{{ reserva.id }}"
+                                    data-monto="{{ reserva.monto_total_str }}">
+                                <i class="fa-solid fa-dollar-sign"></i> Pagar
+                            </button>
+                            {% endif %}
+                            <a href="" class="btn btn-editar btn-sm mb-1">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            {% if reserva.estado in "Pendiente,Confirmada" %}
+                            <button type="button" class="btn btn-eliminar btn-sm" data-bs-toggle="modal" data-bs-target="#reserva-modal-cancelar"
+                                data-url="{% url 'reserva_cancelar' reserva.id %}" data-huesped="{{ reserva.huesped }}">
+                                <i class="fas fa-xmark"></i> Cancelar
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% include 'paginacion.html'%}
+        </div>
+
+        <div id="reserva-calendario" class="d-none">
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Modal para formulario de Agregar/Editar -->
+<div class="modal fade" id="reserva-modal" tabindex="-1" aria-labelledby="formReservaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="reserva-modal-content">
+            <!-- Contenido dinámico con JS -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Cancelar -->
+<div class="modal fade" id="reserva-modal-cancelar" tabindex="-1" aria-labelledby="cancelarReservaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" id="form-cancelar-reserva">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Cancelación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea cancelar la reserva de <strong id="cancelar-huesped-nombre"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-eliminar">Confirmar Cancelación</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de Pago -->
+<div class="modal fade" id="pago-modal" tabindex="-1" aria-labelledby="pagoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" id="form-pago-reserva" action="{% url 'registrar_pago' %}">
+                {% csrf_token %}
+                <input type="hidden" name="reserva_id" id="reserva-id-pago">
+                <div class="modal-header">
+                    <h5 class="modal-title">Registrar Pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Monto a pagar:</label>
+                        <input type="text" class="form-control" id="monto-pago" value="{{ reserva.monto_total }}" readonly>
+                    </div>
+                    {{ pago_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-principal">Confirmar Pago</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_personalizados %}
+    <script type="module" src="{% static 'reservas/js/main_reservas.js' %}"></script>
+
+{% endblock %}

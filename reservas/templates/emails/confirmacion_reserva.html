@@ -1,0 +1,12 @@
+<h2>Reserva Confirmada</h2>
+<p>Estimado/a {{ reserva.huesped.nombre }},</p>
+<p>Gracias por su reserva. Aquí se encuentran los detalles de la misma:</p>
+
+<ul>
+    <li><strong>Check-in:</strong> {{ reserva.fecha_check_in_esperada }}</li>
+    <li><strong>Check-out:</strong> {{ reserva.fecha_check_out_esperada }}</li>
+    <li><strong>Habitaciones:</strong> {{ reserva.habitaciones_str }}</li>
+    <li><strong>Total pagado:</strong> {{ reserva.monto_total }}</li>
+</ul>
+
+<p>Lo esperamos en el Hotel, ¡Muchas Gracias!</p>

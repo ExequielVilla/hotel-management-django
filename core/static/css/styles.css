@@ -91,9 +91,13 @@ h1, h2, h3, h4, h5 {
     cursor: pointer;
 }
 
+.scroll-form-tipo-hab{
+    max-height: 180px;
+}
+
 
 /********** Generalidades *********/
-.modal-header{
+.modal-header, .btn-outline-primary{
     background-color: #DBE2EF; /* Fondo general */
     color: #112D4E; /* Texto principal */
 }
@@ -110,12 +114,12 @@ h1, h2, h3, h4, h5 {
     margin-right: 5px;
 }
 
-.nav-tabs .nav-link.active{
+.nav-tabs .nav-link.active, .pagination .page-item.active .page-link, .btn-outline-primary.active{
     background-color: #112D4E; /* Fondo del tab activo */
     color: #F9F7F7; /* Color del texto del tab activo */
 }
 
-.nav-tabs .nav-link:hover, .sidebar .nav-item:hover {
+.nav-tabs .nav-link:hover, .sidebar .nav-item:hover, .pagination .page-item .page-link:hover, .btn-outline-primary:hover {
     background-color: #3F72AF; /* Fondo del tab al hacer hover */
     color: #F9F7F7; /* Color del texto al hacer hover */
 }
@@ -170,4 +174,39 @@ h1, h2, h3, h4, h5 {
 .btn-principal:hover {
     background-color: #152e86; /* Rojo más oscuro al pasar el mouse */
     color: #F9F7F7 ;
+}
+
+
+/* RESERVAS */
+.scroll-form-reservas-alojamiento{
+    max-height: 400px;
+}
+
+/* paginacion */
+.page-link {
+    color:  #3F72AF; /* Cambia el color de los números y flechas */
+}
+.pagination .page-item .page-link{
+    border: 0px;
+}
+
+
+/* #calendar {
+    min-height: 600px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ddd;
+} */
+
+.fc, 
+.fc a, 
+.fc-daygrid-day-number, 
+.fc-col-header-cell-cushion {
+    color: #000000 !important; /* Negro - cambia al color que necesites */
+}
+
+.fc-event-title {
+    font-size: 0.8em !important; /* (0.8em = 80% del tamaño original) */
+    padding: 2px 4px !important; /* reduce el padding para mejor ajuste */
 }
