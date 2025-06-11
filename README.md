@@ -10,6 +10,7 @@ Corresponde a un sistema de gestion interna de un hotel boutique, incluyendo mó
 
 ### TAB Habitaciones y Tipo de Habitaciones
 ![Habitaciones](screenshots/Habitaciones.png)
+![Tipos_de_Habitaciones](screenshots/Tipos_de_Habitaciones.png)
 
 ### Modulo de Huéspedes
 ![Habitaciones](screenshots/Habitaciones.png)
