@@ -1,6 +1,6 @@
 # Hotel Boutique - Sistema de gestión interna
 Este trabajo fue desarrollado como proyecto personal con el objetivo de poner en práctica tecnologías de desarrollo web (Python con Djando, Javascript, HTML, CSS y boostrap).  
-Corresponde a un sistema de gestion interna de un hotel boutique, incluyendo módulos para reservas, check-in, check-out, habitaciones y usuarios.
+Corresponde a un sistema de gestion interna de un hotel boutique, incluyendo módulos para reservas, check-in, check-out, habitaciones y Huespedes.
 
 
 ## 📸 Capturas de pantalla
