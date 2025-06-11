@@ -10,16 +10,18 @@ Corresponde a un sistema de gestion interna de un hotel boutique, incluyendo mó
 
 ### TAB Habitaciones y Tipo de Habitaciones
 ![Habitaciones](screenshots/Habitaciones.png)
-![Tipos_de_Habitaciones](screenshots/Tipos_de_Habitaciones.png)
+![Tipos de Habitaciones](screenshots/Tipos%20de%20Habitaciones.png)
+![Carrusel fotos](screenshots/Carrusel%20foto%20de%20habitaciones.png)
 
 ### Modulo de Huéspedes
-![Habitaciones](screenshots/Habitaciones.png)
-
-### Modulo de Reservas
 ![Huespedes](screenshots/Huespedes.png)
 
+### Modulo de Reservas
+![Reservas](screenshots/Agenda%20de%20Reservas.png)
+
 ### Formulario registrar reserva
-![Reserva](screenshots/.png)
+![Formulario Reservas1](screenshots/Ejemplo%20Reserva%20(1.1).png)
+![Formulario Reservas2](screenshots/Ejemplo%20Reserva%20(1.2).png)
 
 ### Modulo de Check-In 
 ![Check-In](screenshots/Check-In.png)
